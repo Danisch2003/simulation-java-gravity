@@ -45,19 +45,23 @@ class Planet {
   }
 
   // Methode mit der die Masse des Planetens verändert wird
-  public void setMass(double addedMass) {
+  public void setMass(double addedMass, double otherVelocityX, double otherVelocityY) {
+    this.velocityX = (((this.mass * this.velocityX) + (addedMass * otherVelocityX)) / ( this.mass + addedMass));
+    this.velocityY = (((this.mass * this.velocityY) + (addedMass * otherVelocityY)) / ( this.mass + addedMass));
+    this.accX = 0;
+    this.accY = 0;
     this.mass += addedMass;
   }
 
   // Distanzen zwischen Punkten berechnen
   public double calculateDistX(double x2) {
-      return this.x - x2;
+      return x2 - this.x;
   }
   public double calculateDistY(double y2) {
-    return this.y - y2;
+    return y2 - this.y;
   }
-  public double calculateDistanceBetweenPoints(double x1, double y1, double x2, double y2) {
-   return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
+  public double calculateDistanceBetweenPoints(double diffX, double diffY) {
+   return Math.sqrt(diffX * diffX + diffY * diffY);
  }
 
   // Gravitaionskraft zwichen zwei Planeten berechnet
@@ -67,12 +71,11 @@ class Planet {
     double yDifference = 0;
     double strength = 0;
     double distance = 0;
-    double G = 6.674 * Math.pow(10,-6);
+    double G = 6.674 * Math.pow(10,-4);
 
     xDifference = calculateDistX(planet.getX());
     yDifference = calculateDistY(planet.getY());
-    distance = calculateDistanceBetweenPoints(this.x, this.y, planet.getX(), planet.getY());
-    //distance = Math.max(1.0, Math.min(50, distance));
+    distance = calculateDistanceBetweenPoints(xDifference, yDifference);
 
     // Newtons Gravitaionsgesetz: F = (G*m*M)/r²
     strength = ((G * planet.getMass() * this.mass) / (distance * distance));
@@ -95,8 +98,7 @@ class Planet {
     this.velocityY += this.accY;
     this.x += this.velocityX;
     this.y += this.velocityY;
-    this.accX *= 0;
-    this.accY *= 0;
+    this.accX = 0;
+    this.accY = 0;
   }
-
 }
